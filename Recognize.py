@@ -17,7 +17,7 @@ lbph.read('Classifiers/TrainedLBPH.yml')
 camera = cv.VideoCapture(0)
 
 # Set the threshold for trust score to determine if the recognition is valid
-RECOGNITION_THRESHOLD = 80  # You can adjust this value based on your use case
+RECOGNITION_THRESHOLD = 30  # You can adjust this value based on your use case
 
 while cv.waitKey(1) & 0xFF != ord('q'):
     _, img = camera.read()
