@@ -39,30 +39,48 @@ def start_laptop_camera(id):
     cv.destroyAllWindows()
 
 # Function to choose IP camera
-def start_ip_camera():
+def start_ip_camera(id):
     print("Starting IP Camera...")
+
     rtsp_url = 'rtsp://admin:admin123@192.168.128.10:554/avstream/channel=1/stream=1-substream.sdp'
-    
     cap = cv.VideoCapture(rtsp_url)
 
     if not cap.isOpened():
         messagebox.showerror("Error", "Could not open video stream.")
         return
-    
+
+    face_classifier = cv.CascadeClassifier('Classifiers/haarface.xml')
+    photos_taken = 0
+
     while True:
         ret, frame = cap.read()
-        
+
         if not ret:
             print("Error: Failed to retrieve frame.")
             break
-        
+
+        grey = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
+        faces = face_classifier.detectMultiScale(grey, scaleFactor=1.1, minNeighbors=5, minSize=(50, 50))
+
+        for (x, y, w, h) in faces:
+            cv.rectangle(frame, (x, y), (x + w, y + h), (0, 0, 255), 2)
+
+            face_region = grey[y:y + h, x:x + w]
+            if cv.waitKey(1) & 0xFF == ord('s') and np.average(face_region) > 50:
+                face_img = cv.resize(face_region, (220, 220))
+                img_name = f'face.{id}.{datetime.now().microsecond}.jpeg'
+                cv.imwrite(f'faces/{id}/{img_name}', face_img)
+                photos_taken += 1
+                print(f'{photos_taken} -> Photos taken!')
+
         cv.imshow('IP Camera Live Feed', frame)
-        
+
         if cv.waitKey(1) & 0xFF == ord('q'):
             break
 
     cap.release()
     cv.destroyAllWindows()
+
 
 def capture_photos():
     ID_NAMES_FILE = 'id-names.csv'
