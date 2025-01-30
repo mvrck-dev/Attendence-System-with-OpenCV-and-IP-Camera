@@ -1,4 +1,4 @@
-# Face-Recognition-with-OpenCV
+# Attendence System using Face Recognition with OpenCV & an IP Camera
 
 - This is a simple Face Recognition project using Python OpenCV, to learn and understand the basics of a project. This project is inspired by https://github.com/leodlca/lbph-face-recognition.
 - For Face Detection we use OpenCV's cascade: *haarcascade_frontalface_alt.xml*, which can be found at https://github.com/opencv/opencv/blob/master/data/haarcascades/haarcascade_frontalface_alt.xml.
