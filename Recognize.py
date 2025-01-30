@@ -13,14 +13,36 @@ faceClassifier = cv.CascadeClassifier('Classifiers/haarface.xml')
 lbph = cv.face.LBPHFaceRecognizer_create(threshold=500)
 lbph.read('Classifiers/TrainedLBPH.yml')
 
-# Start the camera
-camera = cv.VideoCapture(0)
+# Ask user to choose the camera type
+print("Choose camera type:")
+print("1. Laptop Camera")
+print("2. IP Camera")
+choice = input("Enter 1 or 2: ")
+
+if choice == "1":
+    camera_source = 0  # Laptop Camera
+elif choice == "2":
+    camera_source = 'rtsp://admin:admin123@192.168.128.10:554/avstream/channel=1/stream=1-substream.sdp'  # IP Camera
+else:
+    print("Invalid choice. Defaulting to Laptop Camera.")
+    camera_source = 0
+
+# Start the chosen camera
+camera = cv.VideoCapture(camera_source)
+
+if not camera.isOpened():
+    print("Error: Could not open the selected camera.")
+    exit()
 
 # Set the threshold for trust score to determine if the recognition is valid
 RECOGNITION_THRESHOLD = 30  # You can adjust this value based on your use case
 
 while cv.waitKey(1) & 0xFF != ord('q'):
-    _, img = camera.read()
+    ret, img = camera.read()
+    if not ret:
+        print("Error: Failed to retrieve frame.")
+        break
+
     grey = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
 
     # Detect faces in the image
